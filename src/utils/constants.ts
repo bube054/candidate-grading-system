@@ -1,0 +1,15 @@
+export const FIXED_FILE_HEADERS = [
+  "S/N",
+  "NAME",
+  "Physical Education",
+  "Parade",
+  "Class Attendance",
+  "Commandant Test",
+  "CONFID. BULD.",
+  "Industrial Attachment",
+  "PROJECT",
+  "Examination",
+  "Grand Total",
+  "Grade Obtained",
+  "Remark",
+];

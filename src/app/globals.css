@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-poppins: var(--font-poppins);
+  --color-background: #E5E7EB;
+  --color-foreground: #fff;
+  --color-primary: #2563EB;
+  --color-secondary: #16A34A;
+}
+
+body {
+  background-color: var(--color-background);
+  font-family: var(--font-poppins);
+}
+
+.helper {
+    @apply font-normal text-sm leading-5 tracking-normal text-left text-gray-500;
+    font-family: 'Roboto';
+}
