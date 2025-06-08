@@ -8,14 +8,17 @@ export async function POST(req: Request) {
 
     const result: CandidateResult = await req.json();
 
-    const file = await createResultPdf(result, origin);
+    const url = `${origin}/assets/result_template.pdf`;
+    const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
+
+    const file = await createResultPdf(existingPdfBytes, result, origin);
 
     return new Response(file, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment`,
       },
-    })
+    });
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 });
   }

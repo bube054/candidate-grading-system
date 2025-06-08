@@ -6,7 +6,7 @@ import { FaShieldAlt, FaUser } from "react-icons/fa";
 export default function Navbar() {
   return (
     <nav className="bg-foreground p-2 sm:px-0">
-      <div className="flex items-center justify-between sm:container sm:max-w-6xl sm:mx-auto">
+      <div className="flex items-center justify-between sm:container sm:max-w-7xl sm:mx-auto">
         <div className="flex items-center gap-2 sm:gap-4">
           <FaShieldAlt color="#16A34A" size={30} className="hidden sm:inline"/>
           <div>

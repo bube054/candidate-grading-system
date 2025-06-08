@@ -2,11 +2,16 @@ import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import JSZip from "jszip";
 import { CandidateResult } from "@/utils/types";
 
-export const createResultPdf = async (result: CandidateResult, origin = "") => {
+export const createResultPdf = async (
+  template: ArrayBuffer,
+  result: CandidateResult,
+  origin = ""
+) => {
   const url = `${origin}/assets/result_template.pdf`;
-  const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
+  // const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
+  // const existingPdfBytes = template;
 
-  const pdfDoc = await PDFDocument.load(existingPdfBytes);
+  const pdfDoc = await PDFDocument.load(template);
 
   const TR = await pdfDoc.embedFont(StandardFonts.TimesRoman);
   const TRB = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
@@ -32,7 +37,7 @@ export const createResultPdf = async (result: CandidateResult, origin = "") => {
     color: rgb(0, 0, 0),
   });
 
-  firstPage.drawText(`${result.examNumber || "CSTCK/2025/30TH - ASC/001"}`, {
+  firstPage.drawText(`${result.examNumber}/${result.CSTCKNumber}`, {
     x: width * 0.36,
     y: height * 0.633,
     size: 14,
@@ -129,7 +134,6 @@ export const createResultPdf = async (result: CandidateResult, origin = "") => {
   });
 
   const pdfBytes = await pdfDoc.save();
-
 
   return pdfBytes;
 };

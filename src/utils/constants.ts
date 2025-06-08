@@ -1,6 +1,7 @@
 export const FIXED_FILE_HEADERS = [
-  "S/N",
+  "CSTCK NO",
   "NAME",
+  "Service Number",
   "Physical Education",
   "Parade",
   "Class Attendance",

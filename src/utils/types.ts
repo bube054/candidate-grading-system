@@ -1,4 +1,5 @@
 export interface CandidateResult {
+  CSTCKNumber?: number
   serviceNumber?: number
   name?: string
   physicalEducation?: number
@@ -12,11 +13,12 @@ export interface CandidateResult {
   grandTotal?: number
   gradeObtained?: string
   remark?: string
-  examNumber?: number
+  examNumber?: string
   selected?: boolean
 }
 
 export const candidateResultKeys = [
+  "CSTCKNumber",
   "serviceNumber",
   "name",
   "physicalEducation",

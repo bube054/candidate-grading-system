@@ -1,5 +1,6 @@
 import { FIXED_FILE_HEADERS } from "./constants";
 import { CandidateResult } from "./types";
+import { generateCandidateResultExamNumber } from "./generators";
 
 const validateserviceNumber = (
   serviceNumber: string | number
@@ -12,6 +13,19 @@ const validateserviceNumber = (
 
   if (serviceNumber <= 0)
     return [false, "Invalid serial number: recieved 0, required > 0"];
+
+  return [true, ""];
+};
+
+const validateCSTCKNumber = (number: string | number): [boolean, string] => {
+  if (typeof number == "string")
+    return [
+      false,
+      "Invalid CSTCK Number type: recieved string, required number",
+    ];
+
+  if (number <= 0)
+    return [false, "Invalid STCK Number: recieved 0, required > 0"];
 
   return [true, ""];
 };
@@ -57,6 +71,7 @@ const validateRemark = (remark: string | number): [boolean, string] => {
 };
 
 export const validateResults = (
+  filename: string,
   data: (number | string)[][]
 ): [boolean, string, CandidateResult[]] => {
   if (data.length === 0) return [false, "No data found", []];
@@ -70,7 +85,7 @@ export const validateResults = (
     return [
       false,
       `Invalid column amount: recieved ${headers.length}, required ${columnAmount}`,
-      []
+      [],
     ];
 
   for (const [index, header] of headers.entries()) {
@@ -93,56 +108,83 @@ export const validateResults = (
 
   const candidateResults: CandidateResult[] = [];
 
+  const examNumber = generateCandidateResultExamNumber(filename);
+
   for (const [i, row] of results?.entries()) {
-    const candidateResult: CandidateResult = {selected: false};
+    const candidateResult: CandidateResult = { selected: false };
     for (const [j, value] of row?.entries()) {
       const positionMessage = `At ${i + 2} row, ${j + 1} column. `;
       switch (j) {
         case 0: {
-          candidateResult.serviceNumber = (value as number);
+          candidateResult.CSTCKNumber = value as number;
+          candidateResult.examNumber = examNumber;
+          const [isValidCSTCK, CSTCKMessage] = validateCSTCKNumber(value);
+          if (!isValidCSTCK)
+            return [false, positionMessage.concat(CSTCKMessage), []];
+          break;
+        }
+        case 1: {
+          candidateResult.name = value as string;
+          const [isValidName, nameMessage] = validateName(value);
+          if (!isValidName)
+            return [false, positionMessage.concat(nameMessage), []];
+          break;
+        }
+        case 2: {
+          candidateResult.serviceNumber = value as number;
           const [isValidSerial, serialMessage] = validateserviceNumber(value);
           if (!isValidSerial)
             return [false, positionMessage.concat(serialMessage), []];
           break;
         }
-        case 1: {
-          candidateResult.name = (value as string);
-          const [isValidName, nameMessage] = validateName(value);
-          if (!isValidName) return [false, positionMessage.concat(nameMessage), []];
+        case 3: {
+          candidateResult.physicalEducation = value as number;
           break;
         }
-        case 2:
-          candidateResult.physicalEducation = (value as number);
-        case 3:
-          candidateResult.parade = (value as number);
-        case 4:
-          candidateResult.classAttendance = (value as number);
-        case 5:
-          candidateResult.commandantTest = (value as number);
-        case 6:
-          candidateResult.confidBuld = (value as number);
-        case 7:
-          candidateResult.industrialAttachment = (value as number);
-        case 8:
-          candidateResult.project = (value as number);
-        case 9:
-          candidateResult.examination = (value as number);
+        case 4: {
+          candidateResult.parade = value as number;
+          break;
+        }
+        case 5: {
+          candidateResult.classAttendance = value as number;
+          break;
+        }
+        case 6: {
+          candidateResult.commandantTest = value as number;
+          break;
+        }
+        case 7: {
+          candidateResult.confidBuld = value as number;
+          break;
+        }
+        case 8: {
+          candidateResult.industrialAttachment = value as number;
+          break;
+        }
+        case 9: {
+          candidateResult.project = value as number;
+          break;
+        }
         case 10: {
-          candidateResult.grandTotal = (value as number);
-          const [isValidName, nameMessage] = validateNumber(value);
-          if (!isValidName) return [false, positionMessage.concat(nameMessage), []];
+          candidateResult.examination = value as number;
           break;
         }
         case 11: {
-          candidateResult.gradeObtained = (value as string);
-          const [isValidName, nameMessage] = validateGrade(value);
-          if (!isValidName) return [false, positionMessage.concat(nameMessage), []];
+          candidateResult.grandTotal = value as number;
+          const [isValid, message] = validateNumber(value);
+          if (!isValid) return [false, positionMessage.concat(message), []];
           break;
         }
         case 12: {
-          candidateResult.remark = (value as string);
-          const [isValidName, nameMessage] = validateRemark(value);
-          if (!isValidName) return [false, positionMessage.concat(nameMessage), []];
+          candidateResult.gradeObtained = value as string;
+          const [isValid, message] = validateGrade(value);
+          if (!isValid) return [false, positionMessage.concat(message), []];
+          break;
+        }
+        case 13: {
+          candidateResult.remark = value as string;
+          const [isValid, message] = validateRemark(value);
+          if (!isValid) return [false, positionMessage.concat(message), []];
           break;
         }
         default:
@@ -155,4 +197,16 @@ export const validateResults = (
 
   // return data.length > 0 && data[0].length > 0;
   return [true, "", candidateResults];
+};
+
+export const validateCandidateResultExcelResultFilename = (
+  filename: string
+): [boolean, string] => {
+  const regex = /^CSTCK_\d{4}_(0?[1-9]|[12][0-9]|3[01])(ST|ND|RD|TH)?_ASC$/;
+
+  if (!regex.test(filename)) {
+    return [false, `Invalid filename: received ${filename}`];
+  }
+
+  return [true, ""];
 };

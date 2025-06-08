@@ -23,6 +23,7 @@ export default function ViewResults() {
   } = useUIStore((state) => state);
   const [itemOffset, setItemOffset] = useState(0);
   const [debouncedSearchText, setDebouncedSearchText] = useState(searchText);
+  const [loading, setLoading] = useState(false);
 
   const memoizedResults = useMemo(() => {
     if (debouncedSearchText?.trim()) {
@@ -71,6 +72,16 @@ export default function ViewResults() {
     );
   };
 
+  const handleUnselectAll = () => {
+    setResults(
+      results.map((result) =>
+        currentResults.some((r) => r.serviceNumber === result.serviceNumber)
+          ? { ...result, selected: false }
+          : result
+      )
+    );
+  };
+
   const handleToggleSelect = (serviceNumber: number) => {
     setResults(
       results.map((result) =>
@@ -89,7 +100,12 @@ export default function ViewResults() {
 
   const handleDownloadSingleResult = async (result: CandidateResult) => {
     // downloadSingleResultPdf(result);
+    let toastId: string | undefined;
+
     try {
+      setLoading(true);
+      toastId = toast.loading("Downloading...");
+
       const response = await fetch("/api/download/single", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -108,15 +124,23 @@ export default function ViewResults() {
       a.download = `${result.serviceNumber}_${result.name}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+      toast.success("Downloaded successfully");
     } catch (error) {
       // @ts-expect-error yuoiop
       toast.error(error?.message || "Failed to generate zip");
+    } finally {
+      if (toastId) toast.dismiss(toastId);
+      setLoading(false);
     }
   };
 
   const handleDownloadZippedResult = async (results: CandidateResult[]) => {
     // downloadSingleResultPdf(result);
+    let toastId: string | undefined;
+
     try {
+      setLoading(true);
+      toastId = toast.loading("Downloading...");
       const response = await fetch("/api/download/batch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -135,9 +159,14 @@ export default function ViewResults() {
       a.download = "results.zip";
       a.click();
       URL.revokeObjectURL(url);
+      toast.success("Downloaded successfully");
     } catch (error) {
       // @ts-expect-error yuoiop
       toast.error(error?.message || "Failed to generate zip");
+    } finally {
+      if (toastId) toast.dismiss(toastId);
+      setLoading(false);
+      handleUnselectAll();
     }
   };
 
@@ -146,38 +175,37 @@ export default function ViewResults() {
   }
 
   return (
-    <div className="px-2 sm:px-0 sm:container sm:max-w-6xl sm:mx-auto">
-      <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-        {/* Move the caption-like content here */}
-        <div className="w-full flex justify-between p-2 sm:p-6 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white">
-          <div className="flex items-center gap-2">
-            <Search
-              value={searchText}
-              onChange={handleSearchChange}
-              className="w-[12rem]"
-              placeholder="Search by columns..."
-            />
-            <Button
-              disabled={selectedResults.length === 0}
-              onClick={() => handleDownloadZippedResult(selectedResults)}
-            >
-              <FaDownload size={20} color="#fff" />
-              <span className="">Download {selectedResults.length || ""}</span>
-            </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <Info>Rows per page:</Info>
-            <Input
-              value={rowsPerPage}
-              onChange={handleRowsPerPageChange}
-              className="w-[5rem]"
-              type="number"
-              step="1"
-              min="1"
-            />
-          </div>
+    <div className="px-2 sm:px-0 sm:container sm:max-w-7xl sm:mx-auto">
+      <div className="w-full overflow-hidden flex flex-col sm:flex-row gap-y-2 justify-between p-2 sm:p-6 text-lg font-semibold text-left rtl:text-right text-gray-900 bg-white rounded-t-lg">
+        <div className="flex items-center gap-2">
+          <Search
+            value={searchText}
+            onChange={handleSearchChange}
+            className="w-[12rem]"
+            placeholder="Search by columns..."
+          />
+          <Button
+            disabled={selectedResults.length === 0 || loading}
+            onClick={() => handleDownloadZippedResult(selectedResults)}
+            // className={loading ? "animate-pulse" : ""}
+          >
+            <FaDownload size={20} color="#fff" />
+            <span className="">Download {selectedResults.length || ""}</span>
+          </Button>
         </div>
-
+        <div className="flex items-center gap-2">
+          <Info>Rows per page:</Info>
+          <Input
+            value={rowsPerPage}
+            onChange={handleRowsPerPageChange}
+            className="w-[5rem]"
+            type="number"
+            step="1"
+            min="1"
+          />
+        </div>
+      </div>
+      <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500">
           <thead className="text-sm text-gray-500 bg-gray-50">
             <tr>
@@ -190,6 +218,9 @@ export default function ViewResults() {
                   // indeterminate={currentResults.some(r => r.selected) && !currentResults.every(r => r.selected)}
                   onChange={handleSelectAll}
                 />
+              </th>
+              <th scope="col" className="px-2 py-3">
+                CSTCK No
               </th>
               <th scope="col" className="px-2 py-3">
                 S/N
@@ -292,6 +323,9 @@ function Result({
         />
       </th>
       <th className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap">
+        {result.CSTCKNumber}
+      </th>
+      <th className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap">
         {result.serviceNumber}
       </th>
       <th className="px-2 py-2 font-medium text-gray-900 whitespace-nowrap">
@@ -337,7 +371,7 @@ const MemoizedResult = memo(Result);
 
 function NoResults() {
   return (
-    <div className="px-2 sm:px-0 sm:container sm:max-w-6xl sm:mx-auto items-center flex flex-col gap-y-3">
+    <div className="px-2 sm:px-0 sm:container sm:max-w-7xl sm:mx-auto items-center flex flex-col gap-y-3">
       <span className="bg-[#F3F4F6] w-12 h-12 rounded-full flex items-center justify-center">
         <FaTable size={20} color="#9CA3AF" />
       </span>
