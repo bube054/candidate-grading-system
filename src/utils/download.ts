@@ -23,7 +23,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.name}`, {
     x: width * 0.36,
-    y: height * 0.71,
+    y: height * 0.670,
     size: 14,
     font: TR,
     color: rgb(0, 0, 0),
@@ -31,7 +31,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.serviceNumber}`, {
     x: width * 0.36,
-    y: height * 0.67,
+    y: height * 0.640,
     size: 14,
     font: TR,
     color: rgb(0, 0, 0),
@@ -39,7 +39,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.examNumber}/${result.CSTCKNumber}`, {
     x: width * 0.36,
-    y: height * 0.633,
+    y: height * 0.610,
     size: 14,
     font: TR,
     color: rgb(0, 0, 0),
@@ -47,7 +47,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.physicalEducation}`, {
     x: width * 0.419,
-    y: height * 0.535,
+    y: height * 0.512,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -55,7 +55,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.parade}`, {
     x: width * 0.419,
-    y: height * 0.505,
+    y: height * 0.482,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -63,7 +63,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.classAttendance}`, {
     x: width * 0.419,
-    y: height * 0.475,
+    y: height * 0.452,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -71,7 +71,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.commandantTest}`, {
     x: width * 0.419,
-    y: height * 0.443,
+    y: height * 0.422,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -79,7 +79,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.confidBuld}`, {
     x: width * 0.419,
-    y: height * 0.411,
+    y: height * 0.392,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -87,7 +87,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.industrialAttachment}`, {
     x: width * 0.419,
-    y: height * 0.379,
+    y: height * 0.362,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -95,7 +95,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.project}`, {
     x: width * 0.419,
-    y: height * 0.347,
+    y: height * 0.332,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -103,7 +103,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.examination}`, {
     x: width * 0.419,
-    y: height * 0.315,
+    y: height * 0.302,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -111,7 +111,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.grandTotal}`, {
     x: width * 0.419,
-    y: height * 0.283,
+    y: height * 0.272,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -119,7 +119,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.gradeObtained}`, {
     x: width * 0.419,
-    y: height * 0.251,
+    y: height * 0.242,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),
@@ -127,7 +127,7 @@ export const createResultPdf = async (
 
   firstPage.drawText(`${result.remark}`, {
     x: width * 0.36,
-    y: height * 0.219,
+    y: height * 0.212,
     size: 14,
     font: TRB,
     color: rgb(0, 0, 0),

@@ -202,7 +202,7 @@ export const validateResults = (
 export const validateCandidateResultExcelResultFilename = (
   filename: string
 ): [boolean, string] => {
-  const regex = /^CSTCK_\d{4}_(0?[1-9]|[12][0-9]|3[01])(ST|ND|RD|TH)?_ASC$/;
+  const regex = /^CSTCK_\d{4}_(\d+)(ST|ND|RD|TH)?_ASC$/;
 
   if (!regex.test(filename)) {
     return [false, `Invalid filename: received ${filename}`];
